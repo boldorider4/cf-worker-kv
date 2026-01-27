@@ -6,6 +6,11 @@
     <title>Surprise me, for once.</title>
 </head>
 <body>
-    <button onclick="window.location.href='/biondina'">click here if you are a biondina</button>
+    <!-- expects a variable called 'content' to be passed in -->
+    <div id="main-content">
+        <!-- 'content' is inserted here via template interpolation in the render pipeline -->
+        <!-- example: okHtml(content) -->
+        {{{content}}}
+    </div>
 </body>
 </html>
