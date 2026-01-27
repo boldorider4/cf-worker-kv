@@ -1,17 +1,6 @@
 import { htmlResponse, notFoundResponse } from '../../lib/response';
 
 
-const files = async (request: Request, env: Env, filename?: string) => {
-    if (!filename) {
-        return notFoundResponse();
-    }
-    const content = await env.APIKEYS.get(filename);
-    if (!content) {
-        return notFoundResponse();
-    }
-	return htmlResponse(`File ${filename} with content ${content}`);
-}
-
 const filesToLi = (file: string) => {
     return `
         <li>
@@ -21,12 +10,20 @@ const filesToLi = (file: string) => {
 }
 
 const filesList = async (request: Request, env: Env) => {
-    const filesFromApiKeys = await env.APIKEYS.get('files', { type: 'json' }) as string[] | null;
-    if (!filesFromApiKeys) {
-        return htmlResponse('<ul>found nothing</ul>');
-    }
-    const filesList = filesFromApiKeys.map(filesToLi).join('');
-    const html = `<ul>${filesList}</ul>`;
+//    const filesFromApiKeys = await env.APIKEYS.get('foobar', { type: 'json' }) as string[] | null;
+    // const filesFromApiKeys = await env.APIKEYS.list();
+    // if (!filesFromApiKeys) {
+    //     return notFoundResponse();
+    // }
+    // const filesList = filesFromApiKeys.map(filesToLi).join('');
+    // const html = `<ul>${filesList}</ul>`;
+
+
+    const filesFromApiKeys = await env.APIKEYS.list();
+	const files = filesFromApiKeys.keys.map(key => key.name);
+	const filesListHtml = files.map(filesToLi).join('');
+	const html = `<ul>${filesListHtml}</ul>`;
+
 	return htmlResponse(html);
 }
 
@@ -54,4 +51,4 @@ const filesPost = async (request: Request, env: Env) => {
     }
 }
 
-export { files, filesList, filesPost };
+export { filesList, filesPost };

@@ -3,7 +3,7 @@ import okHtml from '../html/index.html'
 import notFoundHtml from '../html/404.html'
 
 export const htmlResponse = (content: string): Response =>
-	new Response(okHtml, {
+	new Response(content, {
 		headers: { 'content-type': 'text/html' },
 	})
 
