@@ -1,4 +1,4 @@
-import { htmlResponse, notFoundResponse } from '../../lib/response';
+import { htmlResponse } from '../../lib/response';
 
 
 const filesToLi = (file: string) => {
@@ -10,15 +10,6 @@ const filesToLi = (file: string) => {
 }
 
 const filesList = async (request: Request, env: Env) => {
-//    const filesFromApiKeys = await env.APIKEYS.get('foobar', { type: 'json' }) as string[] | null;
-    // const filesFromApiKeys = await env.APIKEYS.list();
-    // if (!filesFromApiKeys) {
-    //     return notFoundResponse();
-    // }
-    // const filesList = filesFromApiKeys.map(filesToLi).join('');
-    // const html = `<ul>${filesList}</ul>`;
-
-
     const filesFromApiKeys = await env.APIKEYS.list();
 	const files = filesFromApiKeys.keys.map(key => key.name);
 	const filesListHtml = files.map(filesToLi).join('');

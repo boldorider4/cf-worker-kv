@@ -15,10 +15,10 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
         const router = Router();
 
-		router.get('/', () => htmlResponse('Hello, World!'));
+		router.get('/', () => htmlResponse('Homepage'));
 
-		// router.get('/files', () => filesList(request, env));
-		// router.post('/files/?', () => filesPost(request, env));
+		router.get('/files', () => filesList(request, env));
+		router.post('/files/?', () => filesPost(request, env));
 
 		// Catch-all route - return 404 if no route matches
 		// This allows static assets to be served for unmatched routes
