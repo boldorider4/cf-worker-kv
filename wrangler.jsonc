@@ -12,7 +12,8 @@
 	"kv_namespaces": [
 		{
 		  "binding": "APIKEYS",
-		  "id": "bf854ef18dc64e75820c3c2f8413f4f5"
-		}
+		  "id": "bf854ef18dc64e75820c3c2f8413f4f5",
+		  "preview_id": "727301e0fea84e5a91d375847dc9d9a1"
+		},
 	]
 }
