@@ -9,8 +9,10 @@ const filesToLi = (file: string) => {
     `;
 }
 
-const filesList = async (request: Request, env: Env) => {
-    const filesFromApiKeys = await env.APIKEYS.list();
+type RouteContext = { token?: string | null };
+
+const filesList = async (request: Request, env: Env, ctx?: RouteContext) => {
+	const filesFromApiKeys = await env.APIKEYS.list();
 	const files = filesFromApiKeys.keys.map(key => key.name);
 	const filesListHtml = files.map(filesToLi).join('');
 	const html = `<ul>${filesListHtml}</ul>`;
@@ -18,7 +20,7 @@ const filesList = async (request: Request, env: Env) => {
 	return htmlResponse(html);
 }
 
-const filesPost = async (request: Request, env: Env) => {
+const filesPost = async (request: Request, env: Env, ctx?: RouteContext) => {
     try {
         const { filename, content } = await request.json() as { filename: string, content: string };
         if (!filename || content === undefined) {
