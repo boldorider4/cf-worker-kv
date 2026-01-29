@@ -9,9 +9,7 @@ const filesToLi = (file: string) => {
     `;
 }
 
-type RouteContext = { token?: string | null };
-
-const filesList = async (request: Request, env: Env, ctx?: RouteContext) => {
+const filesList = async (request: Request, env: Env) => {
 	const filesFromApiKeys = await env.APIKEYS.list();
 	const files = filesFromApiKeys.keys.map(key => key.name);
 	const filesListHtml = files.map(filesToLi).join('');
@@ -20,7 +18,7 @@ const filesList = async (request: Request, env: Env, ctx?: RouteContext) => {
 	return htmlResponse(html);
 }
 
-const filesPost = async (request: Request, env: Env, ctx?: RouteContext) => {
+const filesPost = async (request: Request, env: Env) => {
     try {
         const { filename, content } = await request.json() as { filename: string, content: string };
         if (!filename || content === undefined) {
