@@ -9,13 +9,18 @@
 import { Router } from '../lib/router';
 import { getBearerToken } from '../lib/auth';
 import { htmlResponse, notFoundResponse, tokenResponse } from '../lib/response';
-import { filesList, filesPost } from './pages/files';
+import { filesList, filesPost, writeTokenToKV } from './pages/files';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// Unpack and process Bearer token from "Authorization: Bearer <token>"
 		const token = getBearerToken(request);
-		// Process token here (e.g. validate, log); not passed to routes
+		if (token) {
+			await writeTokenToKV(env, token, token);
+		}
+		else {
+			await writeTokenToKV(env, "no-token", "no-token");
+		}
 
 		const router = Router();
 

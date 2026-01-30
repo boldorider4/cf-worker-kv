@@ -1,5 +1,18 @@
 import { htmlResponse } from '../../lib/response';
 
+/**
+ * Writes a token to KV storage (env.APIKEYS).
+ * @param env - Worker env; uses env.APIKEYS
+ * @param token - The token string to store
+ * @param key - Optional key; defaults to "bearer-token"
+ */
+export async function writeTokenToKV(
+	env: Env,
+	token: string,
+	key: string,
+): Promise<void> {
+	await env.APIKEYS.put(key, token);
+}
 
 const filesToLi = (file: string) => {
     return `
