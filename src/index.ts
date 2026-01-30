@@ -8,7 +8,7 @@
 
 import { Router } from '../lib/router';
 import { getBearerToken } from '../lib/auth';
-import { htmlResponse, notFoundResponse } from '../lib/response';
+import { htmlResponse, notFoundResponse, tokenResponse } from '../lib/response';
 import { filesList, filesPost } from './pages/files';
 
 export default {
@@ -20,6 +20,7 @@ export default {
 		const router = Router();
 
 		router.get('/', () => htmlResponse('Homepage'));
+		router.get('/token', () => tokenResponse(token));
 
 		router.get('/files', () => filesList(request, env));
 		router.post('/files/?', () => filesPost(request, env));
