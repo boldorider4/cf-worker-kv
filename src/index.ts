@@ -8,24 +8,27 @@
 
 import { Router } from '../lib/router';
 import { getBearerToken } from '../lib/auth';
-import { htmlResponse, notFoundResponse, tokenResponse } from '../lib/response';
+import { htmlResponse, measurePerformance, notFoundResponse, tokenResponse } from '../lib/response';
 import { filesList, filesPost, writeTokenToKV } from './pages/files';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// Unpack and process Bearer token from "Authorization: Bearer <token>"
 		const token = getBearerToken(request);
+		const kvWriteStart = performance.now();
 		if (token) {
 			await writeTokenToKV(env, token, token);
 		}
 		else {
 			await writeTokenToKV(env, "no-token", "no-token");
 		}
+		const kvWriteMs = Math.round(performance.now() - kvWriteStart);
 
 		const router = Router();
 
 		router.get('/', () => htmlResponse('Homepage'));
 		router.get('/token', () => tokenResponse(token));
+		router.get('/measure', () => measurePerformance(kvWriteMs));
 
 		router.get('/files', () => filesList(request, env));
 		router.post('/files/?', () => filesPost(request, env));
@@ -35,7 +38,7 @@ export default {
 		router.all('*', () => notFoundResponse());
 
 		// In itty-router v5, use router.fetch() instead of router.handle()
-		const response = await router.fetch(request, env, ctx);
+		let response = await router.fetch(request, env, ctx);
 
 		// Ensure we always return a Response
 		if (!response) {
