@@ -2,7 +2,7 @@
 import notFoundHtml from '../html/404.html'
 import tokenHtml from '../html/token.html'
 import measureHtml from '../html/measure.html'
-import { writeTokenToKV, getKeyFromKV, listKeys } from '../src/pages/keys';
+import { writeTokenToKV, getKeyFromKV, listKeys } from '../src/keys';
 
 export const htmlResponse = (content: string): Response =>
 	new Response(content, {
