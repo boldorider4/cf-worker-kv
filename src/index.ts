@@ -9,7 +9,7 @@
 import { Router } from '../lib/router';
 import { getBearerToken } from '../lib/auth';
 import { htmlResponse, measurePerformance, notFoundResponse, tokenResponse } from '../lib/response';
-import { filesList, filesPost, writeTokenToKV } from './pages/files';
+import { keysList, keysPost, writeTokenToKV } from './pages/keys';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
@@ -30,8 +30,8 @@ export default {
 		router.get('/token', () => tokenResponse(token));
 		router.get('/measure', () => measurePerformance(kvWriteMs));
 
-		router.get('/files', () => filesList(request, env));
-		router.post('/files/?', () => filesPost(request, env));
+		router.get('/keys', () => keysList(request, env));
+		router.post('/keys/?', () => keysPost(request, env));
 
 		// Catch-all route - return 404 if no route matches
 		// This allows static assets to be served for unmatched routes
