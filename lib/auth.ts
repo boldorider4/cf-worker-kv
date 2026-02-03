@@ -16,7 +16,8 @@ export function getBearerToken(request: Request): string | null {
 
 	const pathToken =
 		url.pathname.match(/^\/token\/([^/]+)\/?$/)?.[1] ??
-		url.pathname.match(/^\/measure\/put\/([^/]+)\/?$/)?.[1];
+		url.pathname.match(/^\/measure\/put\/([^/]+)\/?$/)?.[1] ??
+		url.pathname.match(/^\/measure\/get\/([^/]+)\/?$/)?.[1];
 	if (pathToken?.trim()) return pathToken.trim();
 
 	return null;

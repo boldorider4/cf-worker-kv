@@ -3,7 +3,7 @@
  *
  * - Run `npm run dev` in your terminal to start a development server
  * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
+ * - Run `wrangler deploy` to publish your worker
  */
 
 import { Router } from '../lib/router';
@@ -21,7 +21,9 @@ export default {
 		router.get('/token/:tokenValue', () => tokenResponse(token));
 		router.get('/token/?', () => tokenResponse(token));
 		router.get('/measure/put/:tokenValue', () => putKeyAndMeasurePerformance(token, env));
+		router.get('/measure/put/?', () => putKeyAndMeasurePerformance(token, env));
 		router.get('/measure/get', () => getKeyAndMeasurePerformance(token, env));
+		router.get('/measure/get/:tokenValue', () => getKeyAndMeasurePerformance(token, env));
 		router.get('/measure/list', () => listKeysAndMeasurePerformance(env));
 
 		// Catch-all route - return 404 if no route matches
