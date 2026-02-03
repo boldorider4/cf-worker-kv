@@ -7,6 +7,9 @@
 </head>
 <body>
     <h1>Performance</h1>
-    <p>KV write: {{KV_WRITE_MS}} ms</p>
+    <p>KV write: value is {{KV_WRITE_VALUE}} timing is {{KV_WRITE_MS}} ms</p>
+    <p>KV get: value  is {{KV_GET_VALUE}} timing is {{KV_GET_MS}} ms</p>
+    <p>KV list: timing is {{KV_LIST_MS}} ms</p>
+    <ul>{{KV_LIST_ITEMS}}</ul>
 </body>
 </html>

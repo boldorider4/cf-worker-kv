@@ -8,30 +8,21 @@
 
 import { Router } from '../lib/router';
 import { getBearerToken } from '../lib/auth';
-import { htmlResponse, measurePerformance, notFoundResponse, tokenResponse } from '../lib/response';
-import { keysList, keysPost, writeTokenToKV } from './pages/keys';
+import { htmlResponse, notFoundResponse, tokenResponse } from '../lib/response';
+import { putKeyAndMeasurePerformance, getKeyAndMeasurePerformance, listKeysAndMeasurePerformance } from '../lib/response';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// Unpack and process Bearer token from "Authorization: Bearer <token>"
 		const token = getBearerToken(request);
-		const kvWriteStart = performance.now();
-		if (token) {
-			await writeTokenToKV(env, token, token);
-		}
-		else {
-			await writeTokenToKV(env, "no-token", "no-token");
-		}
-		const kvWriteMs = Math.round(performance.now() - kvWriteStart);
 
 		const router = Router();
 
 		router.get('/', () => htmlResponse('Homepage'));
 		router.get('/token', () => tokenResponse(token));
-		router.get('/measure', () => measurePerformance(kvWriteMs));
-
-		router.get('/keys', () => keysList(request, env));
-		router.post('/keys/?', () => keysPost(request, env));
+		router.get('/measure/put', () => putKeyAndMeasurePerformance(token, env));
+		router.get('/measure/get', () => getKeyAndMeasurePerformance(token, env));
+		router.get('/measure/list', () => listKeysAndMeasurePerformance(env));
 
 		// Catch-all route - return 404 if no route matches
 		// This allows static assets to be served for unmatched routes
