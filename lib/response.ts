@@ -9,6 +9,12 @@ export const htmlResponse = (content: string): Response =>
 		headers: { 'content-type': 'text/html' },
 	})
 
+export const notFoundResponse = (): Response =>
+	new Response(notFoundHtml, {
+		headers: { 'content-type': 'text/html' },
+		status: 404,
+	})
+
 export const tokenResponse = (token: string | null): Response =>
 	new Response(
 		tokenHtml.replace('{{TOKEN}}', token ?? 'No Bearer token provided.'),
@@ -82,9 +88,3 @@ export const listKeysAndMeasurePerformance = async (env: Env): Promise<Response>
 		.replace('{{KV_WRITE_VALUE}}', '');
 	return new Response(html, { headers: { 'content-type': 'text/html' } });
 }
-
-export const notFoundResponse = (): Response =>
-	new Response(notFoundHtml, {
-		headers: { 'content-type': 'text/html' },
-		status: 404,
-	})

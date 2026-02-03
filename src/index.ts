@@ -15,12 +15,12 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// Unpack and process Bearer token from "Authorization: Bearer <token>"
 		const token = getBearerToken(request);
-
 		const router = Router();
 
 		router.get('/', () => htmlResponse('Homepage'));
-		router.get('/token', () => tokenResponse(token));
-		router.get('/measure/put', () => putKeyAndMeasurePerformance(token, env));
+		router.get('/token/:tokenValue', () => tokenResponse(token));
+		router.get('/token/?', () => tokenResponse(token));
+		router.get('/measure/put/:tokenValue', () => putKeyAndMeasurePerformance(token, env));
 		router.get('/measure/get', () => getKeyAndMeasurePerformance(token, env));
 		router.get('/measure/list', () => listKeysAndMeasurePerformance(env));
 
