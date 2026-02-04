@@ -3,8 +3,9 @@
 Run curl against /measure/put and /measure/get for N tokens.
 Phases:
   1. PUT: NUM_TOKENS puts (one per token), track cumulative ms.
-  2. GET (different key each time): NUM_TOKENS gets, one per previously put token.
-  3. GET (same key): NUM_TOKENS gets, all for the same token (e.g. last one put).
+  2. PUT (same key): NUM_TOKENS puts, same token every time.
+  3. GET (different key each time): NUM_TOKENS gets, one per previously put token.
+  4. GET (same key): NUM_TOKENS gets, all for the same token (e.g. last one put).
 """
 
 import os
@@ -21,8 +22,8 @@ MEASURE_GET_URL = f"{BASE_URL}/measure/get/"
 NUM_TOKENS = 30
 FAKE_TOKENS = [f"fake-token-{i:05d}" for i in range(NUM_TOKENS)]
 
-# Token used for "same key" get phase (e.g. last one put)
-SAME_GET_TOKEN = FAKE_TOKENS[-1]
+# Token used for "same key" put/get phases (e.g. last one put)
+SAME_KEY_TOKEN = FAKE_TOKENS[-1]
 
 # Match X-KV-Write-Ms header or "timing is N ms" in HTML
 HEADER_MS_RE = re.compile(r"^X-KV-Write-Ms:\s*(\d+)", re.IGNORECASE | re.MULTILINE)
@@ -128,22 +129,31 @@ def main() -> None:
     if put_failed:
         print(f"Put phase had {put_failed} failures.", file=sys.stderr)
 
-    # Phase 2: GET each previously put token (different key per request)
+    # Phase 2: PUT same key NUM_TOKENS times
+    same_tokens = [SAME_KEY_TOKEN] * total
+    put_same_cumulative, put_same_failed = run_phase(
+        "Phase 2: PUT (same key every request)",
+        total,
+        run_measure_put,
+        same_tokens,
+        token_label=SAME_KEY_TOKEN,
+    )
+
+    # Phase 3: GET each previously put token (different key per request)
     get_diff_cumulative, get_diff_failed = run_phase(
-        "Phase 2: GET (different key each request)",
+        "Phase 3: GET (different key each request)",
         total,
         run_measure_get,
         FAKE_TOKENS,
     )
 
-    # Phase 3: GET same token NUM_TOKENS times
-    same_tokens = [SAME_GET_TOKEN] * total
+    # Phase 4: GET same token NUM_TOKENS times
     get_same_cumulative, get_same_failed = run_phase(
-        "Phase 3: GET (same key every request)",
+        "Phase 4: GET (same key every request)",
         total,
         run_measure_get,
         same_tokens,
-        token_label=SAME_GET_TOKEN,
+        token_label=SAME_KEY_TOKEN,
     )
 
     # Summary
@@ -154,10 +164,11 @@ def main() -> None:
     print("\n" + "=" * 50)
     print("Summary")
     print("=" * 50)
-    print(f"  PUT  cumulative ms: {put_cumulative}  avg ms: {avg(put_cumulative, put_failed)}  (failed: {put_failed})")
-    print(f"  GET  (different)   cumulative ms: {get_diff_cumulative}  avg ms: {avg(get_diff_cumulative, get_diff_failed)}  (failed: {get_diff_failed})")
-    print(f"  GET  (same key)    cumulative ms: {get_same_cumulative}  avg ms: {avg(get_same_cumulative, get_same_failed)}  (failed: {get_same_failed})")
-    total_failed = put_failed + get_diff_failed + get_same_failed
+    print(f"  PUT  (different keys)     cumulative ms: {put_cumulative}       avg ms: {avg(put_cumulative, put_failed)}            (failed: {put_failed})")
+    print(f"  PUT  (same key)           cumulative ms: {put_same_cumulative}  avg ms: {avg(put_same_cumulative, put_same_failed)}  (failed: {put_same_failed})")
+    print(f"  GET  (different keys)     cumulative ms: {get_diff_cumulative}  avg ms: {avg(get_diff_cumulative, get_diff_failed)}  (failed: {get_diff_failed})")
+    print(f"  GET  (same key)           cumulative ms: {get_same_cumulative}  avg ms: {avg(get_same_cumulative, get_same_failed)}  (failed: {get_same_failed})")
+    total_failed = put_failed + put_same_failed + get_diff_failed + get_same_failed
     if total_failed:
         sys.exit(1)
 
